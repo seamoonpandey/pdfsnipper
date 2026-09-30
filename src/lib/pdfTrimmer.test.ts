@@ -92,6 +92,22 @@ describe('pdfTrimmer utility', () => {
       expect(trimmedMeta.pageCount).toBe(4); // pages 3, 4, 5, 6
     });
 
+    it('accurately trims single page when startPage equals endPage', async () => {
+      const originalPdf = await createTestPdf(10);
+      const trimmed = await trimPdf(originalPdf, 5, 5);
+
+      const trimmedMeta = await getPdfMetadata(trimmed);
+      expect(trimmedMeta.pageCount).toBe(1);
+    });
+
+    it('accurately trims full document when range is 1 to totalPages', async () => {
+      const originalPdf = await createTestPdf(8);
+      const trimmed = await trimPdf(originalPdf, 1, 8);
+
+      const trimmedMeta = await getPdfMetadata(trimmed);
+      expect(trimmedMeta.pageCount).toBe(8);
+    });
+
     it('throws error when trimming invalid range', async () => {
       const originalPdf = await createTestPdf(5);
       await expect(trimPdf(originalPdf, 4, 8)).rejects.toThrow(
